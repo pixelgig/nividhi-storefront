@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://nividhi-storefront.vercel.app/</loc></url>
-<url><loc>https://nividhi-storefront.vercel.app/shop</loc></url>
-<url><loc>https://nividhi-storefront.vercel.app/about</loc></url>
-<url><loc>https://nividhi-storefront.vercel.app/contact</loc></url>
-<url><loc>https://nividhi-storefront.vercel.app/shipping-policy</loc></url>
-<url><loc>https://nividhi-storefront.vercel.app/returns</loc></url>
-<url><loc>https://nividhi-storefront.vercel.app/privacy</loc></url>
-<url><loc>https://nividhi-storefront.vercel.app/terms</loc></url>
+<url><loc>https://nividhi.in/</loc></url>
+<url><loc>https://nividhi.in/shop</loc></url>
+<url><loc>https://nividhi.in/links</loc></url>
+<url><loc>https://nividhi.in/about</loc></url>
+<url><loc>https://nividhi.in/contact</loc></url>
+<url><loc>https://nividhi.in/shipping-policy</loc></url>
+<url><loc>https://nividhi.in/returns</loc></url>
+<url><loc>https://nividhi.in/privacy</loc></url>
+<url><loc>https://nividhi.in/terms</loc></url>
 </urlset>

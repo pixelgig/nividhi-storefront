@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nividhi-storefront.vercel.app/sitemap.xml
+Sitemap: https://nividhi.in/sitemap.xml
