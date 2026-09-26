@@ -20,7 +20,11 @@
 <div class="zoom" id="zoom" onclick="this.classList.remove('open')"><button>×</button><img id="zoomImg" alt=""></div>
 <script src="/_vercel/insights/script.js" defer></script>
 <script>
-const SHEET_ID='1M2PsStJmo6hIPDA7pwoAKatrtoHNUiun-kHA26cCZZo',FALLBACK_WA='917669292626';let PRODUCTS=[],SET={},CATEGORIES=[],filterCat='',searchQ='',sortBy='featured';
+const SHEET_ID='1M2PsStJmo6hIPDA7pwoAKatrtoHNUiun-kHA26cCZZo',FALLBACK_WA='917669292626';
+const FALLBACK_PRODUCTS=[{"SKU":"NIV-DEMO-001","Product Name":"Butterfly Earrings","Category":"Earrings","Subcategory":"Fashion Earrings","Direct Price":149,"MRP":399,"Amazon Price":199,"Amazon URL":"https://www.amazon.in/dp/B0HKGBXFG4","Meesho Price":199,"Meesho URL":"","Flipkart Price":"","Flipkart URL":"","Image 1 URL":"","Image 2 URL":"","Image 3 URL":"","Short Description":"Elegant butterfly earrings for everyday and occasion wear.","Material":"Alloy","Colour":"Gold","Plating":"Gold Plated","Stock Qty":0,"Featured":"YES","New Arrival":"YES","Active":"YES","Sort Order":10,"Slug":"butterfly-earrings"}];
+const FALLBACK_SET={"Brand Name":"NIVIDHI","WhatsApp Number":"917669292626","Currency":"INR","Direct Order Enabled":"YES","Site Status":"LIVE"};
+const FALLBACK_CATEGORIES=[{"Category":"Earrings","Slug":"earrings","Active":"YES","Sort Order":10},{"Category":"Necklaces","Slug":"necklaces","Active":"YES","Sort Order":20},{"Category":"Pendants","Slug":"pendants","Active":"YES","Sort Order":30},{"Category":"Bracelets","Slug":"bracelets","Active":"YES","Sort Order":40},{"Category":"Hair Accessories","Slug":"hair-accessories","Active":"YES","Sort Order":50}];
+let PRODUCTS=FALLBACK_PRODUCTS.slice(),SET={...FALLBACK_SET},CATEGORIES=FALLBACK_CATEGORIES.slice(),filterCat='',searchQ='',sortBy='featured';
 const gvizUrl=s=>`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(s)}&t=${Date.now()}`;
 async function sheet(s){const r=await fetch(gvizUrl(s),{cache:'no-store'});if(!r.ok)throw Error('Sheet '+s+' unavailable');const t=await r.text(),j=JSON.parse(t.slice(t.indexOf('{'),t.lastIndexOf('}')+1)),h=j.table.cols.map(c=>(c.label||'').trim());return j.table.rows.map(row=>Object.fromEntries(h.map((k,i)=>[k,row.c?.[i]?.v??''])));}
 const yes=v=>String(v).trim().toUpperCase()==='YES',num=v=>{if(typeof v==='number')return Number.isFinite(v)?v:null;const s=String(v??'').replace(/[^0-9.-]/g,'');if(!s)return null;const n=Number(s);return Number.isFinite(n)?n:null},INR=v=>{const n=num(v);return n===null?'':new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n)},esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),slug=s=>String(s??'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -78,5 +82,18 @@ document.addEventListener('click',e=>{const a=e.target.closest('[data-track]');i
 function render(){document.getElementById('mobileNav')?.classList.remove('open');setSEO();schema(null);document.getElementById('app').innerHTML=route();updateWish();updateCart();if(typeof gtag==='function')gtag('event','page_view',{page_title:document.title,page_location:location.href,page_path:location.pathname});scrollTo(0,0)}
 function failLoad(message){document.getElementById('app').innerHTML='<div class="loadFail"><div class="eyebrow">Catalogue unavailable</div><h2>Failed to load NIVIDHI</h2><p class="muted">'+esc(message||'We could not load the catalogue right now. Please check your connection and try again.')+'</p><button class="btn primary" onclick="location.reload()">Try again</button></div>'}
 async function withTimeout(p,ms=10000){let id;const timeout=new Promise((_,rej)=>id=setTimeout(()=>rej(new Error('The catalogue took too long to respond.')),ms));try{return await Promise.race([p,timeout])}finally{clearTimeout(id)}}
-async function init(){try{const [p,s,c]=await withTimeout(Promise.all([sheet('Products'),sheet('Settings'),sheet('Categories').catch(()=>[])]),10000);PRODUCTS=p.filter(x=>yes(x.Active)).sort((a,b)=>(num(a['Sort Order'])??999)-(num(b['Sort Order'])??999));SET=Object.fromEntries(s.map(x=>[String(x.Setting??'').trim(),x.Value??'']));CATEGORIES=c;const b=String(SET['Brand Name']||'NIVIDHI');const an=String(SET['Announcement Text']||'').trim();if(an)document.getElementById('announce').textContent=an;const wa=String(SET['WhatsApp Number']||FALLBACK_WA).replace(/\D/g,'');const fwa=document.getElementById('footerWA');if(fwa)fwa.href='https://wa.me/'+wa;const ig=String(SET['Instagram URL']||'').trim();const socialLinks=document.querySelectorAll('#socials a');if(ig&&socialLinks[0]){socialLinks[0].href=ig;socialLinks[0].onclick=null}else if(socialLinks[0])socialLinks[0].style.display='none';if(socialLinks[1])socialLinks[1].style.display='none';render()}catch(e){console.error('NIVIDHI load error:',e);failLoad(e?.message)}}init();
+async function init(){
+  render();
+  try{
+    const results=await withTimeout(Promise.allSettled([sheet('Products'),sheet('Settings'),sheet('Categories')]),8000);
+    const [pr,sr,cr]=results;
+    if(pr.status==='fulfilled'&&pr.value.length)PRODUCTS=pr.value.filter(x=>yes(x.Active)).sort((a,b)=>(num(a['Sort Order'])??999)-(num(b['Sort Order'])??999));
+    if(sr.status==='fulfilled'&&sr.value.length)SET=Object.fromEntries(sr.value.map(x=>[String(x.Setting??'').trim(),x.Value??'']));
+    if(cr.status==='fulfilled'&&cr.value.length)CATEGORIES=cr.value;
+    const an=String(SET['Announcement Text']||'').trim();if(an)document.getElementById('announce').textContent=an;
+    const wa=String(SET['WhatsApp Number']||FALLBACK_WA).replace(/\D/g,'');const fwa=document.getElementById('footerWA');if(fwa)fwa.href='https://wa.me/'+wa;
+    const ig=String(SET['Instagram URL']||'').trim(),socialLinks=document.querySelectorAll('#socials a');if(ig&&socialLinks[0]){socialLinks[0].href=ig;socialLinks[0].onclick=null}else if(socialLinks[0])socialLinks[0].style.display='none';if(socialLinks[1])socialLinks[1].style.display='none';
+    render();
+  }catch(e){console.warn('Live catalogue refresh unavailable; using safe cached catalogue.',e)}
+}init();
 </script></body></html>
